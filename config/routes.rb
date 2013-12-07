@@ -1,4 +1,9 @@
 OmnishipExample::Application.routes.draw do
+  get "usps/index"
+
+  resources "ups"
+  resources "fedex"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

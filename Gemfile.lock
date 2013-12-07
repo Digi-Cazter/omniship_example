@@ -1,6 +1,5 @@
-GIT
-  remote: https://github.com/Digi-Cazter/omniship.git
-  revision: e18017919776166252fba75e60f8c3cc169f9854
+PATH
+  remote: /home/donavan/code/gems/omniship
   specs:
     omniship (0.3.2.2)
       active_utils (>= 1.0.1)
