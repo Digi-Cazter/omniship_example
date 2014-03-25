@@ -2,7 +2,9 @@ class UpsController < ApplicationController
   def index
     @shipment = create_shipment
     @rates = create_rates
+    @tracking = tracking_request
     @valid_address = validate_address
+    @valid_address_street = validate_address_street
   end
 
   def edit
@@ -31,16 +33,30 @@ class UpsController < ApplicationController
     ups = Omniship::UPS.new(@config)
     send_options = {}
     send_options[:test] = true
-    send_options[:origin_account] = @config["account"] # Or just put the shipper account here
+    send_options[:origin_account] = @config["account"] 
     send_options[:service]        = "03"
     response = ups.find_rates(origin, destination, packages, send_options)
+  end
+
+  def tracking_request
+    ups = Omniship::UPS.new(@config)
+    send_options = {}
+    send_options[:test] = true
+    response = ups.find_tracking_info("1Z12345E0291980793", send_options)
   end
 
   def validate_address
     ups = Omniship::UPS.new(@config)
     send_options = {}
     send_options[:test] = true
-    response = ups.validate_address("2930 East 450 North #20","Saint George","UT","84790","US", options={})
+    response = ups.validate_address("St. George","UT","84790","US", send_options)
+  end
+
+  def validate_address_street
+    ups = Omniship::UPS.new(@config)
+    send_options = {}
+    send_options[:test] = false
+    response = ups.validate_address_street("2930 E 450 N #20","St. George","UT","84790","US", send_options)
   end
 
   def create_shipment
@@ -53,9 +69,14 @@ class UpsController < ApplicationController
     ups = Omniship::UPS.new(@config)
     send_options = {}
     send_options[:test] = true
-    send_options[:origin_account] = @config["account"] # Or just put the shipper account here
+    send_options[:origin_account] = @config["account"]
     send_options[:service]        = "03"
+    send_options[:return_service_code] = "9"
+    send_options[:return_service_description] = "My return label"
     response = ups.create_shipment(origin, destination, packages, send_options)
+    logger.info "*************************"
+    logger.info response
+    logger.info "*************************"
     return ups.accept_shipment(response)
   end
 
@@ -89,7 +110,7 @@ class UpsController < ApplicationController
     width  = 1
     height = 1
     package_type = "02"
-    pkg_list << Omniship::Package.new(weight.to_i,[length.to_i,width.to_i,height.to_i],:units => :imperial, :package_type => package_type)
+    pkg_list << Omniship::Package.new(weight.to_i,[length.to_i,width.to_i,height.to_i],units: :imperial, package_type: package_type)
     return pkg_list
   end
 end
