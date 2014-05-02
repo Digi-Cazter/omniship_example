@@ -23,7 +23,7 @@ end
 gem 'jquery-rails'
 gem 'therubyracer'
 
-gem 'omniship', :path => "/Users/donavan/code/gems/omniship"
+gem 'omniship', :path => "/home/donavan/code/gems/omniship"
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
